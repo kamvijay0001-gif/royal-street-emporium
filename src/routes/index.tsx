@@ -59,7 +59,7 @@ function Section({
   );
 }
 
-function Grid({ products, isLoading }: { products?: unknown[]; isLoading: boolean }) {
+function Grid({ products, isLoading }: { products?: unknown[] | undefined; isLoading: boolean }) {
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-4">
