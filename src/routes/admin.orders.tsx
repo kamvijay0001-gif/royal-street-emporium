@@ -73,7 +73,7 @@ function AdminOrders() {
   const update = useMutation({
     mutationFn: async ({ id, patch, note }: { id: string; patch: Record<string, any>; note?: string }) => {
       const before = (data ?? []).find((o) => o.id === id);
-      const { error } = await supabase.from("orders").update(patch).eq("id", id);
+      const { error } = await supabase.from("orders").update(patch as never).eq("id", id);
       if (error) throw error;
       if (patch["status"]) {
         await supabase.from("order_status_history").insert({ order_id: id, status: String(patch["status"]), note: note ?? null });
