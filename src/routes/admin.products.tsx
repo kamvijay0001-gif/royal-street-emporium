@@ -433,10 +433,16 @@ function ImagesDialog({ productId, onClose }: { productId: string; onClose: () =
             <Input
               type="file"
               accept="image/*"
+              multiple
               disabled={uploading}
-              onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])}
+              onChange={async (e) => {
+                const files = Array.from(e.target.files ?? []);
+                e.target.value = "";
+                for (const f of files) await upload(f);
+              }}
               className="mt-1 rounded-none"
             />
+            <p className="mt-1 text-xs text-muted-foreground">Photos are automatically resized to a fast web size before upload.</p>
           </div>
           <div className="flex gap-2">
             <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="or paste an image URL" className="h-10 rounded-none" />
