@@ -4,7 +4,7 @@ import { LogOut } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { StoreLayout, PageHeader } from "@/components/layout/StoreLayout";
 import { Button } from "@/components/ui/button";
-import { useIsAdmin, useSession } from "@/hooks/useSession";
+import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/account")({
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/account")({
 
 function AccountLayout() {
   const { user, loading } = useSession();
-  const isAdmin = useIsAdmin();
+  
   const navigate = useNavigate();
   const qc = useQueryClient();
 
@@ -61,11 +61,6 @@ function AccountLayout() {
               {l.label}
             </Link>
           ))}
-          {isAdmin && (
-            <Link to="/admin" className="block px-3 py-2.5 text-gold transition-colors hover:bg-secondary">
-              Admin Panel
-            </Link>
-          )}
           <Button variant="ghost" onClick={signOut} className="w-full justify-start px-3 text-sm">
             <LogOut className="mr-2 size-4" /> Sign out
           </Button>

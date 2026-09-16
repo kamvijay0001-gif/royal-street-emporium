@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Copy, Plus, Trash2 } from "lucide-react";
@@ -316,6 +316,25 @@ function ImagesDialog({ productId, onClose }: { productId: string; onClose: () =
     },
   });
 
+  // Re-sign any previously stored links that pointed at the (private) public URL.
+  useEffect(() => {
+    (async () => {
+      const marker = `/object/public/${BUCKET}/`;
+      const { data: rows } = await supabase.from("product_images").select("id,url").like("url", `%${marker}%`);
+      if (!rows?.length) return;
+      for (const row of rows) {
+        const path = decodeURIComponent(row.url.split(marker)[1]!.split("?")[0]!);
+        const { data: signed } = await supabase.storage.from(BUCKET).createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
+        if (signed?.signedUrl) {
+          await supabase.from("product_images").update({ url: signed.signedUrl } as never).eq("id", row.id);
+        }
+      }
+      qc.invalidateQueries({ queryKey: ["product-images", productId] });
+      qc.invalidateQueries({ queryKey: ["admin-products"] });
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   async function addUrl(imageUrl: string) {
     const { error } = await supabase.from("product_images").insert({
       product_id: productId,
@@ -364,8 +383,15 @@ function ImagesDialog({ productId, onClose }: { productId: string; onClose: () =
         );
         return;
       }
-      const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
-      await addUrl(pub.publicUrl);
+      const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
+      const { data: signed, error: signError } = await supabase.storage
+        .from(BUCKET)
+        .createSignedUrl(path, TEN_YEARS);
+      if (signError || !signed?.signedUrl) {
+        toast.error("Uploaded, but the image link could not be created. Please try again.");
+        return;
+      }
+      await addUrl(signed.signedUrl);
     } catch (err) {
       toast.error(`Upload failed: ${(err as Error).message}`);
     } finally {
