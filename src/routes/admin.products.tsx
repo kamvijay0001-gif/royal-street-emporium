@@ -332,16 +332,44 @@ function ImagesDialog({ productId, onClose }: { productId: string; onClose: () =
 
   async function upload(file: File) {
     setUploading(true);
-    const path = `${productId}/${Date.now()}-${file.name.replace(/\s/g, "-")}`;
-    const { error } = await supabase.storage.from("product-images").upload(path, file, { upsert: true });
-    if (error) {
+    try {
+      const safeName = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-");
+      const path = `products/${productId}/${crypto.randomUUID()}-${safeName}`;
+      const { error } = await supabase.storage
+        .from(BUCKET)
+        .upload(path, file, { upsert: false, contentType: file.type, cacheControl: "31536000" });
+      if (error) {
+        toast.error(
+          /not found/i.test(error.message)
+            ? "Image storage isn't set up yet. Please try again in a moment."
+            : `Upload failed: ${error.message}`,
+        );
+        return;
+      }
+      const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
+      await addUrl(pub.publicUrl);
+    } catch (err) {
+      toast.error(`Upload failed: ${(err as Error).message}`);
+    } finally {
       setUploading(false);
-      toast.error(error.message);
+    }
+  }
+
+  async function removeImage(id: string, imageUrl: string) {
+    const { error } = await supabase.from("product_images").delete().eq("id", id);
+    if (error) {
+      toast.error(`Could not delete image: ${error.message}`);
       return;
     }
-    const { data: pub } = supabase.storage.from("product-images").getPublicUrl(path);
-    await addUrl(pub.publicUrl);
-    setUploading(false);
+    const marker = `/${BUCKET}/`;
+    const idx = imageUrl.indexOf(marker);
+    if (idx !== -1) {
+      const objectPath = decodeURIComponent(imageUrl.slice(idx + marker.length).split("?")[0]!);
+      await supabase.storage.from(BUCKET).remove([objectPath]);
+    }
+    qc.invalidateQueries({ queryKey: ["product-images", productId] });
+    qc.invalidateQueries({ queryKey: ["admin-products"] });
+    toast.success("Image removed");
   }
 
   return (
