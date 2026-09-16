@@ -61,7 +61,9 @@ function AdminLayout() {
     );
   }
 
-  if (user && !isAdmin) {
+  if (!user) return null;
+
+  if (!isAdmin) {
     return (
       <div className="grid min-h-screen place-items-center px-4 text-center">
         <div>

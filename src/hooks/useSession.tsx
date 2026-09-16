@@ -22,20 +22,23 @@ export function useSession() {
   return { session, user: (session?.user ?? null) as User | null, loading };
 }
 
-export function useIsAdmin() {
+/** Returns true/false once checked, or undefined while the check is pending. */
+export function useIsAdmin(): boolean | undefined {
   const { user } = useSession();
-  return useQuery({
+  const query = useQuery({
     queryKey: ["is-admin", user?.id],
     enabled: !!user,
+    staleTime: 60_000,
+    retry: false,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user!.id)
-        .eq("role", "admin")
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("is_admin");
       if (error) throw error;
-      return !!data;
+      return data === true;
     },
   });
+
+  if (!user) return false;
+  if (query.isError) return false;
+  if (!query.isSuccess) return undefined;
+  return query.data === true;
 }
