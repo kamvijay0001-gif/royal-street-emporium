@@ -218,7 +218,9 @@ function Home() {
                 Analog, digital and premium timepieces — up to 50% off this season.
               </p>
               <Button asChild size="lg" className="mt-7 rounded-none px-8 text-xs uppercase tracking-[0.2em]">
-                <Link to="/watches">Shop Watches</Link>
+                <Link to="/$category" params={{ category: "watches" }}>
+                  Shop Watches
+                </Link>
               </Button>
             </div>
           </div>
