@@ -49,6 +49,7 @@ const EMPTY: Draft = {
 };
 
 const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const BUCKET = "product-images";
 
 function AdminProducts() {
   const qc = useQueryClient();
