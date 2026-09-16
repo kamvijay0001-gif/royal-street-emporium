@@ -400,10 +400,7 @@ function ImagesDialog({ productId, onClose }: { productId: string; onClose: () =
                   size="sm"
                   variant="ghost"
                   className="h-7 text-[0.6rem]"
-                  onClick={async () => {
-                    await supabase.from("product_images").delete().eq("id", img.id);
-                    qc.invalidateQueries({ queryKey: ["product-images", productId] });
-                  }}
+                  onClick={() => removeImage(img.id, img.url)}
                 >
                   <Trash2 className="size-3" />
                 </Button>
