@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CategoryRouteImport } from './routes/$category'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AccountRouteImport } from './routes/account'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BestSellersRouteImport } from './routes/best-sellers'
 import { Route as CartRouteImport } from './routes/cart'
@@ -31,6 +32,7 @@ import { Route as WishlistRouteImport } from './routes/wishlist'
 import { Route as AccountIndexRouteImport } from './routes/account.index'
 import { Route as AccountAddressesRouteImport } from './routes/account.addresses'
 import { Route as AccountOrdersRouteImport } from './routes/account.orders'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as OrderIdRouteImport } from './routes/order.$id'
 import { Route as ProductSlugRouteImport } from './routes/product.$slug'
 
@@ -52,6 +54,11 @@ const AboutRoute = AboutRouteImport.update({
 const AccountRoute = AccountRouteImport.update({
   id: '/account',
   path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -144,6 +151,11 @@ const AccountOrdersRoute = AccountOrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => AccountRoute,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const OrderIdRoute = OrderIdRouteImport.update({
   id: '/order/$id',
   path: '/order/$id',
@@ -160,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/$category': typeof CategoryRoute
   '/about': typeof AboutRoute
   '/account': typeof AccountRouteWithChildren
+  '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/best-sellers': typeof BestSellersRoute
   '/cart': typeof CartRoute
@@ -180,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/order/$id': typeof OrderIdRoute
   '/product/$slug': typeof ProductSlugRoute
   '/account/': typeof AccountIndexRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -205,6 +219,7 @@ export interface FileRoutesByTo {
   '/order/$id': typeof OrderIdRoute
   '/product/$slug': typeof ProductSlugRoute
   '/account': typeof AccountIndexRoute
+  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -212,6 +227,7 @@ export interface FileRoutesById {
   '/$category': typeof CategoryRoute
   '/about': typeof AboutRoute
   '/account': typeof AccountRouteWithChildren
+  '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/best-sellers': typeof BestSellersRoute
   '/cart': typeof CartRoute
@@ -232,6 +248,7 @@ export interface FileRoutesById {
   '/order/$id': typeof OrderIdRoute
   '/product/$slug': typeof ProductSlugRoute
   '/account/': typeof AccountIndexRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -240,6 +257,7 @@ export interface FileRouteTypes {
     | '/$category'
     | '/about'
     | '/account'
+    | '/admin'
     | '/auth'
     | '/best-sellers'
     | '/cart'
@@ -260,6 +278,7 @@ export interface FileRouteTypes {
     | '/order/$id'
     | '/product/$slug'
     | '/account/'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -285,12 +304,14 @@ export interface FileRouteTypes {
     | '/order/$id'
     | '/product/$slug'
     | '/account'
+    | '/admin'
   id:
     | '__root__'
     | '/'
     | '/$category'
     | '/about'
     | '/account'
+    | '/admin'
     | '/auth'
     | '/best-sellers'
     | '/cart'
@@ -311,6 +332,7 @@ export interface FileRouteTypes {
     | '/order/$id'
     | '/product/$slug'
     | '/account/'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -318,6 +340,7 @@ export interface RootRouteChildren {
   CategoryRoute: typeof CategoryRoute
   AboutRoute: typeof AboutRoute
   AccountRoute: typeof AccountRouteWithChildren
+  AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   BestSellersRoute: typeof BestSellersRoute
   CartRoute: typeof CartRoute
@@ -365,6 +388,13 @@ declare module '@tanstack/react-router' {
       path: '/account'
       fullPath: '/account'
       preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -493,6 +523,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountOrdersRouteImport
       parentRoute: typeof AccountRoute
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/order/$id': {
       id: '/order/$id'
       path: '/order/$id'
@@ -525,11 +562,22 @@ const AccountRouteChildren: AccountRouteChildren = {
 const AccountRouteWithChildren =
   AccountRoute._addFileChildren(AccountRouteChildren)
 
+interface AdminRouteChildren {
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CategoryRoute: CategoryRoute,
   AboutRoute: AboutRoute,
   AccountRoute: AccountRouteWithChildren,
+  AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   BestSellersRoute: BestSellersRoute,
   CartRoute: CartRoute,
