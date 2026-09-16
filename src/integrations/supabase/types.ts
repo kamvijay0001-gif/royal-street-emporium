@@ -1145,6 +1145,7 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: never; Returns: boolean }
+      place_order: { Args: { payload: Json }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "staff" | "customer"
