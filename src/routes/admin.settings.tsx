@@ -83,20 +83,20 @@ function AdminSettings() {
   const save = useMutation({
     mutationFn: async (groupKey: string) => {
       const raw = values[groupKey] ?? {};
-      const parsed: Record<string, unknown> = {};
+      const parsed: Record<string, any> = {};
       for (const [k, v] of Object.entries(raw)) {
         if (v === "true" || v === "false") parsed[k] = v === "true";
         else if (v !== "" && !Number.isNaN(Number(v)) && ["cod_fee", "delivery_fee", "free_delivery_threshold", "default_eta_days"].includes(k)) parsed[k] = Number(v);
         else parsed[k] = v;
       }
-      const { error } = await supabase.from("store_settings").update({ value: parsed }).eq("key", groupKey);
+      const { error } = await supabase.from("store_settings").update({ value: parsed as any }).eq("key", groupKey);
       if (error) throw error;
       await supabase.from("admin_audit_logs").insert({
         admin_id: user?.id ?? null,
         action: "settings_updated",
         entity: "store_settings",
         entity_id: groupKey,
-        new_value: parsed,
+        new_value: parsed as any,
       });
     },
     onSuccess: () => {

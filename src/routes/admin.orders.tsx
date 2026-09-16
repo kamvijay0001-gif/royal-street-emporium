@@ -71,7 +71,7 @@ function AdminOrders() {
   });
 
   const update = useMutation({
-    mutationFn: async ({ id, patch, note }: { id: string; patch: Record<string, unknown>; note?: string }) => {
+    mutationFn: async ({ id, patch, note }: { id: string; patch: Record<string, any>; note?: string }) => {
       const before = (data ?? []).find((o) => o.id === id);
       const { error } = await supabase.from("orders").update(patch).eq("id", id);
       if (error) throw error;
@@ -189,7 +189,7 @@ function OrderDialog({
 }: {
   order: OrderRow | null;
   onClose: () => void;
-  onUpdate: (patch: Record<string, unknown>, note?: string) => void;
+  onUpdate: (patch: Record<string, any>, note?: string) => void;
 }) {
   const [courier, setCourier] = useState("");
   const [tracking, setTracking] = useState("");

@@ -48,7 +48,7 @@ function AdminDelivery() {
   });
 
   const update = useMutation({
-    mutationFn: async ({ id, patch }: { id: string; patch: Record<string, unknown> }) => {
+    mutationFn: async ({ id, patch }: { id: string; patch: Record<string, any> }) => {
       const { error } = await supabase.from("serviceable_pincodes").update(patch).eq("id", id);
       if (error) throw error;
     },
