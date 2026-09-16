@@ -42,14 +42,14 @@ function AdminLayout() {
   const qc = useQueryClient();
 
   useEffect(() => {
-    if (!loading && !user) navigate({ to: "/auth", replace: true });
+    if (!loading && !user) navigate({ to: "/admin-login", replace: true });
   }, [loading, user, navigate]);
 
   async function signOut() {
     await qc.cancelQueries();
     qc.clear();
     await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
+    navigate({ to: "/admin-login", replace: true });
   }
 
   if (loading || (user && isAdmin === undefined)) {
