@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Instagram, MapPin, MessageCircle, Phone } from "lucide-react";
 import { useStoreInfo } from "@/hooks/useStore";
 
+const CATS = ["men", "women", "watches", "accessories"];
+
 export function Footer() {
   const store = useStoreInfo();
   return (
@@ -16,12 +18,19 @@ export function Footer() {
 
         <div>
           <p className="eyebrow text-gold">Shop</p>
-          <ul className="mt-4 space-y-2 text-sm text-primary-foreground/75">
-            <li><Link to="/men" className="hover:text-primary-foreground">Men</Link></li>
-            <li><Link to="/women" className="hover:text-primary-foreground">Women</Link></li>
-            <li><Link to="/watches" className="hover:text-primary-foreground">Watches</Link></li>
-            <li><Link to="/accessories" className="hover:text-primary-foreground">Accessories</Link></li>
-            <li><Link to="/offers" className="hover:text-primary-foreground">Offers</Link></li>
+          <ul className="mt-4 space-y-2 text-sm capitalize text-primary-foreground/75">
+            {CATS.map((c) => (
+              <li key={c}>
+                <Link to="/$category" params={{ category: c }} className="hover:text-primary-foreground">
+                  {c}
+                </Link>
+              </li>
+            ))}
+            <li>
+              <Link to="/offers" className="hover:text-primary-foreground">
+                Offers
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -48,12 +57,7 @@ export function Footer() {
             </li>
             <li className="flex items-start gap-2">
               <MessageCircle className="mt-0.5 size-4 shrink-0" />
-              <a
-                href={`https://wa.me/${store.whatsapp}`}
-                target="_blank"
-                rel="noreferrer"
-                className="hover:text-primary-foreground"
-              >
+              <a href={`https://wa.me/${store.whatsapp}`} target="_blank" rel="noreferrer" className="hover:text-primary-foreground">
                 Chat on WhatsApp
               </a>
             </li>
