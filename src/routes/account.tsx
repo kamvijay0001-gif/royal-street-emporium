@@ -22,7 +22,7 @@ export const Route = createFileRoute("/account")({
 
 function AccountLayout() {
   const { user, loading } = useSession();
-  const isAdmin = useIsAdmin();
+  
   const navigate = useNavigate();
   const qc = useQueryClient();
 
