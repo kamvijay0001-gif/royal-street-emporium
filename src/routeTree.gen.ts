@@ -23,6 +23,7 @@ import { Route as NewArrivalsRouteImport } from './routes/new-arrivals'
 import { Route as OffersRouteImport } from './routes/offers'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as ReturnPolicyRouteImport } from './routes/return-policy'
+import { Route as ReturnsRouteImport } from './routes/returns'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as ShippingPolicyRouteImport } from './routes/shipping-policy'
 import { Route as TermsRouteImport } from './routes/terms'
@@ -103,6 +104,11 @@ const ReturnPolicyRoute = ReturnPolicyRouteImport.update({
   path: '/return-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReturnsRoute = ReturnsRouteImport.update({
+  id: '/returns',
+  path: '/returns',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SearchRoute = SearchRouteImport.update({
   id: '/search',
   path: '/search',
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/offers': typeof OffersRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/return-policy': typeof ReturnPolicyRoute
+  '/returns': typeof ReturnsRoute
   '/search': typeof SearchRoute
   '/shipping-policy': typeof ShippingPolicyRoute
   '/terms': typeof TermsRoute
@@ -188,6 +195,7 @@ export interface FileRoutesByTo {
   '/offers': typeof OffersRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/return-policy': typeof ReturnPolicyRoute
+  '/returns': typeof ReturnsRoute
   '/search': typeof SearchRoute
   '/shipping-policy': typeof ShippingPolicyRoute
   '/terms': typeof TermsRoute
@@ -214,6 +222,7 @@ export interface FileRoutesById {
   '/offers': typeof OffersRoute
   '/privacy-policy': typeof PrivacyPolicyRoute
   '/return-policy': typeof ReturnPolicyRoute
+  '/returns': typeof ReturnsRoute
   '/search': typeof SearchRoute
   '/shipping-policy': typeof ShippingPolicyRoute
   '/terms': typeof TermsRoute
@@ -241,6 +250,7 @@ export interface FileRouteTypes {
     | '/offers'
     | '/privacy-policy'
     | '/return-policy'
+    | '/returns'
     | '/search'
     | '/shipping-policy'
     | '/terms'
@@ -265,6 +275,7 @@ export interface FileRouteTypes {
     | '/offers'
     | '/privacy-policy'
     | '/return-policy'
+    | '/returns'
     | '/search'
     | '/shipping-policy'
     | '/terms'
@@ -290,6 +301,7 @@ export interface FileRouteTypes {
     | '/offers'
     | '/privacy-policy'
     | '/return-policy'
+    | '/returns'
     | '/search'
     | '/shipping-policy'
     | '/terms'
@@ -316,6 +328,7 @@ export interface RootRouteChildren {
   OffersRoute: typeof OffersRoute
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute
   ReturnPolicyRoute: typeof ReturnPolicyRoute
+  ReturnsRoute: typeof ReturnsRoute
   SearchRoute: typeof SearchRoute
   ShippingPolicyRoute: typeof ShippingPolicyRoute
   TermsRoute: typeof TermsRoute
@@ -424,6 +437,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReturnPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/returns': {
+      id: '/returns'
+      path: '/returns'
+      fullPath: '/returns'
+      preLoaderRoute: typeof ReturnsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/search': {
       id: '/search'
       path: '/search'
@@ -520,6 +540,7 @@ const rootRouteChildren: RootRouteChildren = {
   OffersRoute: OffersRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   ReturnPolicyRoute: ReturnPolicyRoute,
+  ReturnsRoute: ReturnsRoute,
   SearchRoute: SearchRoute,
   ShippingPolicyRoute: ShippingPolicyRoute,
   TermsRoute: TermsRoute,
