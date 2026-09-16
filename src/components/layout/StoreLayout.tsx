@@ -25,7 +25,7 @@ export function StoreLayout({ children }: { children: ReactNode }) {
   );
 }
 
-export function PageHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+export function PageHeader({ title, subtitle }: { title: string; subtitle?: string | undefined }) {
   return (
     <div className="border-b border-border bg-secondary/60">
       <div className="mx-auto max-w-7xl px-4 py-12 text-center md:py-16">

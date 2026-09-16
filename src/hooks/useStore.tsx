@@ -74,7 +74,7 @@ export type ProductRow = {
 const PRODUCT_SELECT =
   "*, product_images(url, alt, position, is_primary), product_variants(id, size, color, color_hex, stock, is_active, sku, price_override)";
 
-export function useProducts(opts: { categorySlug?: string; flag?: "new" | "best" | "offers" | "featured"; search?: string } = {}) {
+export function useProducts(opts: { categorySlug?: string | undefined; flag?: "new" | "best" | "offers" | "featured" | undefined; search?: string | undefined } = {}) {
   const { data: cats } = useCategories();
   return useQuery({
     queryKey: ["products", opts, cats?.length ?? 0],

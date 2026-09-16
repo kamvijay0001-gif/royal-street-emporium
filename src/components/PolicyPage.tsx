@@ -8,7 +8,7 @@ export function PolicyPage({
   policyKeys,
 }: {
   title: string;
-  subtitle?: string;
+  subtitle?: string | undefined;
   policyKeys: { key: string; heading: string }[];
 }) {
   const { data: settings, isLoading } = useSettings();

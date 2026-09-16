@@ -68,7 +68,7 @@ export function Header() {
                 <Link
                   key={n.label}
                   to={n.to}
-                  params={n.params}
+                  {...(n.params ? { params: n.params } : {})}
                   onClick={() => setOpen(false)}
                   style={{ animationDelay: `${i * 35}ms` }}
                   className="animate-fade-up border-b border-border/60 py-3 text-sm uppercase tracking-[0.18em]"
@@ -99,7 +99,7 @@ export function Header() {
             <Link
               key={n.label}
               to={n.to}
-              params={n.params}
+              {...(n.params ? { params: n.params } : {})}
               className="text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
               activeProps={{ className: "text-foreground" }}
             >
