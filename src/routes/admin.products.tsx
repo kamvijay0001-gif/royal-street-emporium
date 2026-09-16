@@ -331,14 +331,31 @@ function ImagesDialog({ productId, onClose }: { productId: string; onClose: () =
     }
   }
 
-  async function upload(file: File) {
+  async function shrinkImage(file: File): Promise<Blob> {
+    const bitmap = await createImageBitmap(file);
+    const MAX = 1600;
+    const scale = Math.min(1, MAX / Math.max(bitmap.width, bitmap.height));
+    const w = Math.round(bitmap.width * scale);
+    const h = Math.round(bitmap.height * scale);
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d")!;
+    ctx.drawImage(bitmap, 0, 0, w, h);
+    bitmap.close();
+    const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, "image/webp", 0.82));
+    return blob ?? file;
+  }
+
+  async function upload(rawFile: File) {
     setUploading(true);
     try {
-      const safeName = file.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-");
-      const path = `products/${productId}/${crypto.randomUUID()}-${safeName}`;
+      const file = await shrinkImage(rawFile);
+      const base = rawFile.name.toLowerCase().replace(/[^a-z0-9.]+/g, "-").replace(/\.[^.]+$/, "");
+      const path = `products/${productId}/${crypto.randomUUID()}-${base}.webp`;
       const { error } = await supabase.storage
         .from(BUCKET)
-        .upload(path, file, { upsert: false, contentType: file.type, cacheControl: "31536000" });
+        .upload(path, file, { upsert: false, contentType: "image/webp", cacheControl: "31536000" });
       if (error) {
         toast.error(
           /not found/i.test(error.message)
@@ -416,10 +433,16 @@ function ImagesDialog({ productId, onClose }: { productId: string; onClose: () =
             <Input
               type="file"
               accept="image/*"
+              multiple
               disabled={uploading}
-              onChange={(e) => e.target.files?.[0] && upload(e.target.files[0])}
+              onChange={async (e) => {
+                const files = Array.from(e.target.files ?? []);
+                e.target.value = "";
+                for (const f of files) await upload(f);
+              }}
               className="mt-1 rounded-none"
             />
+            <p className="mt-1 text-xs text-muted-foreground">Photos are automatically resized to a fast web size before upload.</p>
           </div>
           <div className="flex gap-2">
             <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="or paste an image URL" className="h-10 rounded-none" />
