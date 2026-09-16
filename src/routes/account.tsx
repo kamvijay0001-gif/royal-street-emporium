@@ -61,11 +61,6 @@ function AccountLayout() {
               {l.label}
             </Link>
           ))}
-          {isAdmin && (
-            <Link to="/admin" className="block px-3 py-2.5 text-gold transition-colors hover:bg-secondary">
-              Admin Panel
-            </Link>
-          )}
           <Button variant="ghost" onClick={signOut} className="w-full justify-start px-3 text-sm">
             <LogOut className="mr-2 size-4" /> Sign out
           </Button>
