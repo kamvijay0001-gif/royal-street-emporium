@@ -4,7 +4,7 @@ import { LogOut } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { StoreLayout, PageHeader } from "@/components/layout/StoreLayout";
 import { Button } from "@/components/ui/button";
-import { useIsAdmin, useSession } from "@/hooks/useSession";
+import { useSession } from "@/hooks/useSession";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/account")({
