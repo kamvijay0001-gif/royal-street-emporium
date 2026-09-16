@@ -316,6 +316,25 @@ function ImagesDialog({ productId, onClose }: { productId: string; onClose: () =
     },
   });
 
+  // Re-sign any previously stored links that pointed at the (private) public URL.
+  useEffect(() => {
+    (async () => {
+      const marker = `/object/public/${BUCKET}/`;
+      const { data: rows } = await supabase.from("product_images").select("id,url").like("url", `%${marker}%`);
+      if (!rows?.length) return;
+      for (const row of rows) {
+        const path = decodeURIComponent(row.url.split(marker)[1]!.split("?")[0]!);
+        const { data: signed } = await supabase.storage.from(BUCKET).createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
+        if (signed?.signedUrl) {
+          await supabase.from("product_images").update({ url: signed.signedUrl } as never).eq("id", row.id);
+        }
+      }
+      qc.invalidateQueries({ queryKey: ["product-images", productId] });
+      qc.invalidateQueries({ queryKey: ["admin-products"] });
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   async function addUrl(imageUrl: string) {
     const { error } = await supabase.from("product_images").insert({
       product_id: productId,
