@@ -364,8 +364,15 @@ function ImagesDialog({ productId, onClose }: { productId: string; onClose: () =
         );
         return;
       }
-      const { data: pub } = supabase.storage.from(BUCKET).getPublicUrl(path);
-      await addUrl(pub.publicUrl);
+      const TEN_YEARS = 60 * 60 * 24 * 365 * 10;
+      const { data: signed, error: signError } = await supabase.storage
+        .from(BUCKET)
+        .createSignedUrl(path, TEN_YEARS);
+      if (signError || !signed?.signedUrl) {
+        toast.error("Uploaded, but the image link could not be created. Please try again.");
+        return;
+      }
+      await addUrl(signed.signedUrl);
     } catch (err) {
       toast.error(`Upload failed: ${(err as Error).message}`);
     } finally {
