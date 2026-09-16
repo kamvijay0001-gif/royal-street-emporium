@@ -8,23 +8,24 @@ import { useCart } from "@/hooks/useStore";
 import { useSession } from "@/hooks/useSession";
 import { cn } from "@/lib/utils";
 
-const NAV = [
-  { label: "Home", to: "/" },
-  { label: "Men", to: "/men" },
-  { label: "Women", to: "/women" },
-  { label: "Watches", to: "/watches" },
-  { label: "Accessories", to: "/accessories" },
+type NavItem = { label: string; to: string; params?: { category: string } };
+
+const NAV: NavItem[] = [
+  { label: "Men", to: "/$category", params: { category: "men" } },
+  { label: "Women", to: "/$category", params: { category: "women" } },
+  { label: "Watches", to: "/$category", params: { category: "watches" } },
+  { label: "Accessories", to: "/$category", params: { category: "accessories" } },
   { label: "New Arrivals", to: "/new-arrivals" },
   { label: "Best Sellers", to: "/best-sellers" },
   { label: "Offers", to: "/offers" },
-] as const;
+];
 
 export function AnnouncementBar() {
   return (
     <div className="bg-primary text-primary-foreground">
       <div className="mx-auto flex max-w-7xl items-center justify-center gap-6 overflow-hidden px-4 py-2 text-center">
         <span className="eyebrow animate-fade-in">New Collection Available</span>
-        <span className="eyebrow hidden sm:inline text-gold">Secure Online Payments</span>
+        <span className="eyebrow hidden text-gold sm:inline">Secure Online Payments</span>
         <span className="eyebrow hidden md:inline">COD Available</span>
       </div>
     </div>
@@ -57,13 +58,17 @@ export function Header() {
               <Menu className="size-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-[85vw] max-w-sm">
+          <SheetContent side="left" className="w-[85vw] max-w-sm overflow-y-auto">
             <SheetTitle className="font-display text-xl">Royal Street</SheetTitle>
             <nav className="mt-6 flex flex-col">
+              <Link to="/" onClick={() => setOpen(false)} className="border-b border-border/60 py-3 text-sm uppercase tracking-[0.18em]">
+                Home
+              </Link>
               {NAV.map((n, i) => (
                 <Link
-                  key={n.to}
+                  key={n.label}
                   to={n.to}
+                  {...(n.params ? { params: n.params } : {})}
                   onClick={() => setOpen(false)}
                   style={{ animationDelay: `${i * 35}ms` }}
                   className="animate-fade-up border-b border-border/60 py-3 text-sm uppercase tracking-[0.18em]"
@@ -90,10 +95,11 @@ export function Header() {
         </Link>
 
         <nav className="mr-auto hidden items-center gap-6 lg:flex">
-          {NAV.slice(1).map((n) => (
+          {NAV.map((n) => (
             <Link
-              key={n.to}
+              key={n.label}
               to={n.to}
+              {...(n.params ? { params: n.params } : {})}
               className="text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-foreground"
               activeProps={{ className: "text-foreground" }}
             >
@@ -122,7 +128,7 @@ export function Header() {
               {count > 0 && (
                 <span
                   key={count}
-                  className="animate-pop absolute -right-0.5 -top-0.5 grid size-4.5 min-w-4.5 place-items-center rounded-full bg-gold px-1 text-[0.6rem] font-semibold text-primary"
+                  className="absolute -right-0.5 -top-0.5 grid size-4 min-w-4 animate-pop place-items-center rounded-full bg-gold px-1 text-[0.6rem] font-semibold text-primary"
                 >
                   {count}
                 </span>

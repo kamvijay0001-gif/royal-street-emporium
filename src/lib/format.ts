@@ -8,7 +8,7 @@ export function discountPercent(mrp: number, price: number) {
   return Math.round(((mrp - price) / mrp) * 100);
 }
 
-export const ORDER_FLOW = [
+export const ORDER_FLOW: string[] = [
   "pending_payment",
   "paid",
   "confirmed",
@@ -17,7 +17,7 @@ export const ORDER_FLOW = [
   "shipped",
   "out_for_delivery",
   "delivered",
-] as const;
+];
 
 export const STATUS_LABELS: Record<string, string> = {
   pending_payment: "Pending Payment",
