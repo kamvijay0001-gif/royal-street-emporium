@@ -18,9 +18,9 @@ export const Route = createFileRoute("/contact")({
 
 function ContactPage() {
   const store = useStoreInfo();
-  const phone = String(store?.["phone"] ?? "");
-  const whatsapp = String(store?.["whatsapp"] ?? "").replace(/\D/g, "");
-  const address = String(store?.["address"] ?? "");
+  const phone = store.phone;
+  const whatsapp = store.whatsapp.replace(/\D/g, "");
+  const address = store.address;
 
   return (
     <StoreLayout>
@@ -29,7 +29,7 @@ function ContactPage() {
         <div className="animate-fade-up space-y-6">
           <Item icon={MapPin} label="Store Address" value={address} />
           <Item icon={Phone} label="Phone" value={phone} />
-          <Item icon={Clock} label="Opening Hours" value={String(store?.["hours"] ?? "")} />
+          <Item icon={Clock} label="Opening Hours" value={store.hours} />
           <Item icon={Instagram} label="Instagram" value="@royalstreet99" />
           <div className="flex flex-wrap gap-3 pt-2">
             {whatsapp && (

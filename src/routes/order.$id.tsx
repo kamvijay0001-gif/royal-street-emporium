@@ -4,7 +4,7 @@ import { Check, Download, MessageCircle, QrCode } from "lucide-react";
 import { StoreLayout, PageHeader } from "@/components/layout/StoreLayout";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useStoreInfo } from "@/hooks/useStore";
+import { useSettings, useStoreInfo } from "@/hooks/useStore";
 import { supabase } from "@/integrations/supabase/client";
 import { ORDER_FLOW, formatDate, inr, qrImageUrl, statusLabel, upiLink } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -25,6 +25,8 @@ export const Route = createFileRoute("/order/$id")({
 function OrderPage() {
   const { id } = Route.useParams();
   const store = useStoreInfo();
+  const { data: settings } = useSettings();
+  const upiId = String(((settings?.["payments"] ?? {}) as Record<string, unknown>)["upi_id"] ?? "9053346151@upi");
 
   const { data: order, isLoading } = useQuery({
     queryKey: ["order", id],
@@ -68,7 +70,7 @@ function OrderPage() {
   const awaitingPayment = order.payment_method === "online" && order.payment_status !== "paid";
   const reached = ORDER_FLOW.indexOf(order.status);
   const address = order.shipping_address as Record<string, string>;
-  const whatsappNumber = (store?.["whatsapp"] as string) ?? "";
+  const whatsappNumber = store.whatsapp;
   const waText = encodeURIComponent(
     `Hello Royal Street Mini Mall, I need help with order ${order.order_number} (Total ${inr(order.total)}).`,
   );
@@ -97,7 +99,7 @@ function OrderPage() {
             <p className="eyebrow flex items-center gap-2"><QrCode className="size-4 text-gold" /> Pay {inr(order.total)}</p>
             <div className="mt-5 grid items-center gap-6 sm:grid-cols-[200px_1fr]">
               <img
-                src={qrImageUrl(upiLink({ upiId: String(store?.["upi_id"] ?? "9053346151@upi"), name: String(store?.["name"] ?? "Royal Street Mini Mall"), amount: Number(order.total), note: order.order_number }))}
+                src={qrImageUrl(upiLink({ upiId: upiId, name: store.name, amount: Number(order.total), orderNumber: order.order_number }))}
                 alt={`UPI QR code for ${inr(order.total)}`}
                 width={200}
                 height={200}
@@ -105,16 +107,16 @@ function OrderPage() {
               />
               <div className="space-y-3 text-sm">
                 <p>
-                  Scan with any UPI app, or pay to <span className="font-medium">{String(store?.["upi_id"] ?? "9053346151@upi")}</span>
+                  Scan with any UPI app, or pay to <span className="font-medium">{upiId}</span>
                 </p>
                 <p className="text-xs text-muted-foreground">Order reference: {order.order_number}</p>
                 <Button asChild className="rounded-none text-xs uppercase tracking-[0.16em]">
                   <a
                     href={upiLink({
-                      upiId: String(store?.["upi_id"] ?? "9053346151@upi"),
-                      name: String(store?.["name"] ?? "Royal Street Mini Mall"),
+                      upiId: upiId,
+                      name: store.name,
                       amount: Number(order.total),
-                      note: order.order_number,
+                      orderNumber: order.order_number,
                     })}
                   >
                     Open UPI App
@@ -168,9 +170,9 @@ function OrderPage() {
         <div className="border border-border p-6" id="invoice">
           <div className="flex items-start justify-between">
             <div>
-              <p className="font-display text-xl">{String(store?.["name"] ?? "Royal Street Mini Mall")}</p>
-              <p className="mt-1 max-w-xs text-xs text-muted-foreground">{String(store?.["address"] ?? "")}</p>
-              <p className="text-xs text-muted-foreground">{String(store?.["phone"] ?? "")}</p>
+              <p className="font-display text-xl">{store.name}</p>
+              <p className="mt-1 max-w-xs text-xs text-muted-foreground">{store.address}</p>
+              <p className="text-xs text-muted-foreground">{store.phone}</p>
             </div>
             <div className="text-right text-xs">
               <p className="font-medium">Invoice {order.order_number}</p>
